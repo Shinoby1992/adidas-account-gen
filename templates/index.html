@@ -1,43 +1,34 @@
+<!DOCTYPE html>
 <html>
 
-  <head>
+<head>
+	<title>Captcha Solver</title>
+	<script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
+</head>
 
-    <title>Token Harvester</title>
-    <style type="text/css">
-      body {
-        margin: 1em 5em 0 5em;
-        font-family: sans-serif;
-        background-color: #4D4746
-      }
-      p {
-        font-family: sans-serif;
-        color: #F3F0F0
-      }
-    </style>
+<body>
+		<p>Adidas Account Generator | ryan9918_</p>
 
-  </head>
+		<div class="g-recaptcha" data-sitekey="{{ sitekey }}" data-callback="submitCaptcha"></div>
 
-  <body>
+		<script src=static/scripts/jquery-3.2.1.min.js></script>
 
-    <p>Adidas Account Generator | theRealChefUK</p>
+		<script type="text/javascript">
+			function submitCaptcha() {
+				$(function() {
+					jQuery.ajax({
+						url: "/submit",
+						method: "POST",
+						data: {
+								"g-recaptcha-response": grecaptcha.getResponse()
+						},
+						dataType: "html"
+					});
+					grecaptcha.reset();
+				});
+			}
+		</script>
 
-    <form action="/submit" method="post">
-        <div class="g-recaptcha" data-sitekey="{{ sitekey }}" data-callback="sub"></div>
-        <script type="text/javascript" src="https://www.google.com/recaptcha/api.js"></script>
-        <p><input type="submit" value="Submit" id="submit"/></p>
-    </form>
-
-    <p>Captcha Sitekey:  {{ sitekey}}</p>
-    
-    <script>
-      function sub(){
-        document.getElementById("submit").click();
-      }
-    </script>
-
-    <script src=static/scripts/jquery-3.2.1.min.js></script>
-    <script src=static/scripts/captcha.js></script>
-
-  </body>
+</body>
 
 </html>
