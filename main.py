@@ -142,9 +142,7 @@ if __name__ == '__main__':
 		input("")
 		sys.exit()
 	except:
-		logger.error("Failed to locate and edit hosts file. Edit the hosts file manually instead.")
-		input("")
-		sys.exit()
+		logger.error("Failed to edit hosts file. Make sure to edit the hosts file manually before continuing if this has not been done already.")
 	_thread.start_new_thread(app.run, ())
 	_thread.start_new_thread(manageTokens, ())
 	accountsList = []
