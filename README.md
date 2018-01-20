@@ -12,6 +12,15 @@ A tool coded in Python that allows the user to generate accounts for Adidas US o
 - `termcolor`
 
 ## Installation and Usage
+### Method 1 (windows only)
+Use these instructions if you are on windows. The generator will attempt to edit your hosts file if needed automatically. If this fails, just follow the instructions for editing your hosts file manually
+- Run command prompt or other console application as admin
+- Make sure you have installed all of the modules listed above, using `pip install` (or `pip3 install` if you have python2 too) to do so
+- `cd` into the directory location
+- `python main.py` or `python3 main.py` if you also have python2 installed and added to path
+- You must SOLVE CAPTCHAS MANUALLY (one per account you want to create)
+
+### Method 2
 - You need to add the below line to your hosts file (google how to do this if you do not know)
 - `127.0.0.1 fuckrsvpkingz.adidas.co.uk`
 - Make sure you have installed all of the modules listed above, using `pip install` (or `pip3 install` if you have python2 too) to do so
@@ -24,12 +33,9 @@ A tool coded in Python that allows the user to generate accounts for Adidas US o
 - [X] Add captcha support
 - [X] Catch-all domain support
 - [X] Random password generation
-- [ ] 2captcha support
-- [ ] Gmail tricks support
-- [ ] Multi-threading
-- [ ] Custom password usage
+- [ ] Gmail dot-trick support
+- [ ] Package to executables
 
 ## Notes
-- I will push the full version in the next few days, the current version contains some of the code for 2captcha but does not function as it should (some accounts don't actually create) so edit the code at your own risk.
 - Try check your email inbox for adidas account creation emails to make sure the accounts are actually being created
 - If you choose 100 accounts, be prepared to solve 100 captchas. If you exit the script before all accounts have been created they will NOT be saved
