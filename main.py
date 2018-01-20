@@ -38,7 +38,7 @@ def manageTokens():
 				tokens.remove(item)
 		sleep(5)
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='C:\AccountGenerator\\templates', static_folder='C:\AccountGenerator\static')
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -139,6 +139,11 @@ if __name__ == '__main__':
 				file.close()
 	except PermissionError:
 		logger.error("Failed to edit hosts file. Make sure to run as admin or edit hosts file manually.")
+		input("")
+		sys.exit()
+	except:
+		logger.error("Failed to locate and edit hosts file. Edit the hosts file manually instead.")
+		input("")
 		sys.exit()
 	_thread.start_new_thread(app.run, ())
 	_thread.start_new_thread(manageTokens, ())
