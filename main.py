@@ -38,7 +38,8 @@ def manageTokens():
 				tokens.remove(item)
 		sleep(5)
 
-app = Flask(__name__, template_folder='C:\AccountGenerator\\templates', static_folder='C:\AccountGenerator\static')
+# app = Flask(__name__, template_folder='C:\AccountGenerator\\templates', static_folder='C:\AccountGenerator\static')
+app = Flask(__name__)
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
