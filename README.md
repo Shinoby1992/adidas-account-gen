@@ -10,17 +10,19 @@ A tool coded in Python that allows the user to generate accounts for Adidas US o
 - `flask`
 - `colorama`
 - `termcolor`
+- `faker`
 
 ## Installation and Usage
 ### Method 1 (windows only)
 Use these instructions if you are on windows. The generator will attempt to edit your hosts file if needed automatically. If this fails, just follow the instructions for editing your hosts file manually
 - Run command prompt or other console application as admin
 - Make sure you have installed all of the modules listed above, using `pip install` (or `pip3 install` if you have python2 too) to do so
+- Edit `config.json` with a suitable editor e.g. sublime or atom (NOT NOTEPAD)
 - `cd` into the directory location
 - `python main.py` or `python3 main.py` if you also have python2 installed and added to path
 - You must SOLVE CAPTCHAS MANUALLY (one per account you want to create)
 
-### Method 2
+### Method 2 (editing hosts file manually)
 - You need to add the below line to your hosts file (google how to do this if you do not know)
 - `127.0.0.1 fuckrsvpkingz.adidas.co.uk`
 - Make sure you have installed all of the modules listed above, using `pip install` (or `pip3 install` if you have python2 too) to do so
