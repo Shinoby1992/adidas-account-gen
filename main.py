@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs
-from random import *
+from random import randint, choice
 from time import sleep
 import string
 import _thread
@@ -10,6 +10,7 @@ from datetime import datetime
 import logging
 import webbrowser
 import sys
+from faker import Faker
 
 from utils import Logger
 
@@ -50,7 +51,7 @@ def base():
 
 @app.route('/solve', methods=['GET'])
 def solve():
-	sitekey = "6LdyFRkUAAAAAF2YmQ9baZ6ytpVnbVSAymVpTXKi"
+	sitekey = "6LdC0iQUAAAAAOYmRv34KSLDe-7DmQrUSYJH8eB_"
 	return render_template('index.html', sitekey=sitekey)
 
 
@@ -63,58 +64,51 @@ def submit():
 
 class Generator():
 
-	def __init__(self, locale, sitekey, pageurl):
-		self.locale = locale.upper()
-		if locale.upper() == "UK":
-			self.domain = '.co.uk'
-			self.language = 'en_GB'
-		else:
-			self.domain = '.com'
-			self.language = 'en_US'
+	def __init__(self, sitekey, pageurl):
 		self.sitekey = sitekey
-
-	def create_account(self, email, password, captcha_token):		
-		headers = {
-			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.98 Safari/537.36',
-			'Accept-Encoding': 'gzip, deflate, sdch, br',
-			'Accept-Language': 'en-GB,en;q=0.8',
-			'Upgrade-Insecure-Requests': '1'
-		}
-		s = requests.Session()
-		s.headers.update(headers)
-		r = s.get('https://cp.adidas{}/web/eCom/{}/loadcreateaccount'.format(self.domain, self.language))
-		csrftoken = bs(r.text, "html.parser").find('input', {'name': 'CSRFToken'})['value']
-		s.headers.update({
-			'Origin': 'https://cp.adidas{}'.format(self.domain),
-			'Referer': 'https://cp.adidas{}/web/eCom/{}/loadcreateaccount'.format(self.domain, self.language)
-			})
-		data = {
-			'firstName': 'John',
-			'lastName': 'Smith',
-			'minAgeCheck': 'true',
-			'day': '23',
-			'month': '05',
-			'year': '1998',
-			'_minAgeCheck': 'on',
-			'email': email,
-			'password': password,
-			'confirmPassword': password,
-			'_amf': 'on',
-			'terms': 'true',
-			'_terms': 'on',
-			'metaAttrs[pageLoadedEarlier]': 'true',
-			'app': 'eCom',
-			'locale': self.language,
-			'domain': '',
-			'consentData1': 'Sign me up for adidas emails, featuring exclGBive offers, featuring latest product info, news about upcoming events, and more. See our <a target="_blank" href="https://www.adidas.co.uk/GB/help-topics-privacy_policy.html">Policy Policy</a> for details.',
-			'consentData2': '',
-			'consentData3': '',
-			'CSRFToken': csrftoken,
-			'g-recaptcha-response': captcha_token
+		self.faker = Faker()
+		self.headers = {
+			'Origin': 'https://cp.adidas.co.uk',
+			'Referer': 'https://cp.adidas.co.uk/web/eCom/en_GB/loadcreateaccount',
+			'x-client-id': '62wi38jgwliizcyxz5f193dtfoweqywh'
 			}
-		r = s.post('https://cp.adidas{}/web/eCom/{}/accountcreate'.format(self.domain, self.language), data=data)
+
+	def create_account(self, email, password, captcha_token):
+		name = self.faker.name()
+		payload = {
+			'source': '40',
+			'account': {
+				'firstName': name[0],
+				'lastName': name[1],
+				'email': email,
+				'password': password,
+				'confirmPassword': password,
+				'dateOfBirth': '{}-{}-{}'.format(randint(1970,1995), randint(1,11), randint(1,25))
+			},
+			'communicationLanguage': 'en',
+			'countryOfSite': 'GB',
+			'detectionCookie': 'eCom|en_GB|cp.adidas.co.uk|null',
+			'idpAdapterId': 'adidasIdP10',
+			'inErrorResource': 'https://www.adidas.co.uk/on/demandware.store/Sites-adidas-GB-Site/en_GB/null',
+			'loginUrl': 'https://www.adidas.co.uk/on/demandware.store/Sites-adidas-GB-Site/en_GB/MyAccount-CreateOrLogin',
+			'partnerSpId': 'sp:demandware',
+			'pfStartSSOURL': 'https://cp.adidas.co.uk/idp/startSSO.ping',
+			'profile': {
+				'consumerAttributes': []
+			},
+			'reCaptchaResponse': captcha_token,
+			'subscription': {
+				'serviceId': ['100'],
+				'consents': [{
+					'consentType': 'AMF',
+					'consentValue': False
+				}]
+			},
+			'targetResource': 'https://www.adidas.co.uk/on/demandware.store/Sites-adidas-GB-Site/en_GB/MyAccount-ResumeRegister?target=account'
+		}
+		r = requests.post('https://crm.adidas.com/accounts/createAccount', json=payload, headers=self.headers)
 		account = '{}:{}'.format(email, password)
-		if r.status_code == requests.codes.ok:
+		if r.json()['title'] == "Registration successful":
 			return True, account
 		else:
 			return False, None
@@ -123,7 +117,7 @@ class Generator():
 
 if __name__ == '__main__':
 	logger = Logger()
-	logger.log("Adidas Account Creator v1.1.0")
+	logger.log("Adidas Account Creator v2.0")
 	logger.log("@ryan9918_")
 	logger.log("***************************************************************************")
 	with open('config.json') as file:
@@ -147,14 +141,17 @@ if __name__ == '__main__':
 	_thread.start_new_thread(app.run, ())
 	_thread.start_new_thread(manageTokens, ())
 	accountsList = []
-	creator = Generator(config['locale'], '6LdyFRkUAAAAAF2YmQ9baZ6ytpVnbVSAymVpTXKi', 'https://www.adidas.com')
+	creator = Generator('6LdC0iQUAAAAAOYmRv34KSLDe-7DmQrUSYJH8eB_', 'https://www.adidas.com')
 	num = input("# ACCOUNTS: ")
 	webbrowser.open('http://fuckrsvpkingz.adidas.co.uk:5000/solve')
 	logger.status("Started account generator.")
 	for x in range(int(num)):
 		email = '{}-{}@{}'.format(config['prefix'], randint(1111,999999999), config['domain'])
-		allchar = string.ascii_letters + string.digits
-		passw = "".join(choice(allchar) for x in range(randint(8, 12)))
+		if config['useRandomPassword']:
+			allchar = string.ascii_letters + string.digits
+			passw = "".join(choice(allchar) for x in range(randint(8, 12)))
+		else:
+			passw = config['fixedPassword']
 		logger.warn("Task {} - Waiting for captcha token.".format(x))
 		token = sendToken()
 		logger.log("Task {} - Obtained captcha token.".format(x))

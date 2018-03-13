@@ -1,7 +1,8 @@
 {
-	"locale": "US",
 
 	"prefix": "carts",
+	"domain": "example.com",
 
-	"domain": "example.com"
+	"useRandomPassword": true,
+	"fixedPassword": "Password123!"
 }
